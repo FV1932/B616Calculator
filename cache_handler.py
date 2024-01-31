@@ -19,13 +19,13 @@ class CacheHandler:
         return self
 
     def __exit__(self, type, value, traceback):
-        self.mainPath.parent.mkdir(parents=True, exist_ok=True)
         with open(self.mainPath, "w") as f:
             json.dump(self.__obj, f)
 
     def __init__(self, song_id: str) -> None:
         self.song_id: str = str(song_id)
         self.mainPath = CacheHandler.getMainCachePath(self.song_id)
+        self.mainPath.parent.mkdir(parents=True, exist_ok=True)
         if self.mainPath.is_file():
             with open(self.mainPath, "r") as f:
                 self.__obj = json.load(f)
@@ -43,3 +43,14 @@ class CacheHandler:
     
     def set_cover_url(self, cover_url: str):
         self["cover_url"] = cover_url
+    
+    def write_file(self, filename: str, contents: bytes | str):
+        if isinstance(contents, str):
+            mode = "w"
+        elif isinstance(contents, bytes):
+            mode = "wb"
+        else:
+            raise TypeError("contents must be of type bytes or str")
+        with open(self.mainPath.parent / filename, mode) as f:
+            f.write(contents)
+
