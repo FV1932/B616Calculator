@@ -1,6 +1,4 @@
 import requests
-import lxml.html as html
-import os
 import pathlib
 import json
 
@@ -35,10 +33,13 @@ class CacheHandler:
             self.__obj = {}
 
     def __getitem__(self, name: str):
-        return self.__obj[name]
+        return self.__obj.get(name, None)
 
     def __setitem__(self, name: str, newval):
         self.__obj[name] = newval
 
     def get_cover_url(self) -> str | None:
         return self["cover_url"]
+    
+    def set_cover_url(self, cover_url: str):
+        self["cover_url"] = cover_url
