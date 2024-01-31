@@ -1,3 +1,5 @@
 venv/
 cache/
 .vscode/
+site_cache/
+__pycache__
