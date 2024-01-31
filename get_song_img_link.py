@@ -7,11 +7,13 @@ import logging
 BASE_URL = "https://arcwiki.mcd.blue/"
 
 
-def make_cover_url(song_id: str):
+def make_cover_url(song_id: str, *, force_flush_cache = False):
     with CacheHandler(song_id) as ch:
-        url = ch.get_cover_url()
-        if url:
-            return url
+        if not force_flush_cache:
+            url = ch.get_cover_url()
+            if url:
+                logging.info(f"Returning cover url of {song_id}: {url}")
+                return url
         imagePageUrl = f"/File:Songs_{song_id}.jpg"
         res = requests.get(urljoin(BASE_URL, url=imagePageUrl))
         if res.status_code >= 300:
@@ -26,5 +28,6 @@ def make_cover_url(song_id: str):
 
 
 if __name__ == "__main__":
-    make_cover_url("tempestissimo")
+    logging.basicConfig(level=logging.INFO)
+    make_cover_url("tempestissimo", force_flush_cache=True)
 
