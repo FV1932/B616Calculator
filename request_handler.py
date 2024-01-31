@@ -24,9 +24,9 @@ def make_throttle_hook(timeout: float = 1.0):
 session.hooks['response'].append(make_throttle_hook(1))
 
 
-def get_resource(path: str, refresh: bool = False) -> str:
+def get_resource(path: str, refresh: bool = False) -> requests_cache.Response:
     full_url = urljoin(BASE_URL, path)
     res = session.get(full_url, refresh)
     if res.status_code >= 300:
         raise RuntimeError(f"Failed to get resource at {full_url}")
-    return res.text
+    return res

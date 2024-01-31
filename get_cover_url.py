@@ -14,7 +14,7 @@ def get_cover_url(song_id: str, *, force_flush_cache = False) -> str:
                 logger.info(f"Returning cover url of {song_id}: {url}")
                 return url
         imagePageUrl = f"/File:Songs_{song_id}.jpg"
-        res = get_resource(imagePageUrl)
+        res = get_resource(imagePageUrl).text
         doc_root = html.document_fromstring(res)
         link_div = doc_root.find_class("internal")[0]
         cover_url = link_div.get("href")
