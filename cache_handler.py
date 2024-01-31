@@ -1,10 +1,12 @@
-import requests
 import pathlib
 import json
 
 
 class CacheHandler:
-    """Handles local caches for a song
+    """Handles local caches for a song.
+    This actually shouldn't be used by the user.
+    TODO: Write a better class that serves data from the cache or request it
+    as necessary.
 
     N.B. NOT THREAD SAFE
     """

@@ -3,3 +3,4 @@ cache/
 .vscode/
 site_cache/
 __pycache__
+*.sqlite
