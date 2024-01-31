@@ -18,10 +18,13 @@ def encode_directory(url_path: str) -> str:
 def decode_directory(local_path: str) -> str:
     return b16decode(local_path).decode()
 
+def hash_encoded_dir(encoded_dir: str) -> str:
+    return f"{(hash(encoded_dir)&0xFF):02x}"
+
 
 def get_resource(path: str, force_flush_cache: bool = False) -> str:
     encoded_dir = encode_directory(path)
-    local_cache_path = pathlib.Path(SITE_CACHE, encoded_dir[:2], encoded_dir)
+    local_cache_path = pathlib.Path(SITE_CACHE, hash_encoded_dir(encoded_dir), encoded_dir)
     full_url = urljoin(BASE_URL, path)
 
     if local_cache_path.is_file() and not force_flush_cache:

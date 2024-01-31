@@ -1,4 +1,3 @@
-import requests
 from cache_handler import CacheHandler
 import lxml.html as html
 from urllib.parse import urljoin
@@ -6,9 +5,8 @@ import logging
 from request_handler import get_resource
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
-def make_cover_url(song_id: str, *, force_flush_cache = False):
+def get_cover_url(song_id: str, *, force_flush_cache = False) -> str:
     with CacheHandler(song_id) as ch:
         if not force_flush_cache:
             url = ch.get_cover_url()
@@ -22,9 +20,10 @@ def make_cover_url(song_id: str, *, force_flush_cache = False):
         cover_url = link_div.get("href")
         ch.set_cover_url(cover_url)
         logger.info(f"Set cover url of {song_id} to {cover_url}")
+    return cover_url
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    make_cover_url("tempestissimo", force_flush_cache=True)
+    get_cover_url("tempestissimo", force_flush_cache=True)
 
