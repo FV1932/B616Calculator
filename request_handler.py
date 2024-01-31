@@ -1,3 +1,4 @@
+# Yes this is a (very) budget implementation of something that resembles requests-cache
 import requests
 from urllib.parse import urljoin
 import pathlib
@@ -22,7 +23,7 @@ def get_resource(path: str, force_flush_cache: bool = False) -> str:
     encoded_dir = encode_directory(path)
     local_cache_path = pathlib.Path(SITE_CACHE, encoded_dir[:2], encoded_dir)
     full_url = urljoin(BASE_URL, path)
-    
+
     if local_cache_path.is_file() and not force_flush_cache:
         logger.info(f"Cache hit for resource at {path}")
         with open(local_cache_path, "r") as f:
