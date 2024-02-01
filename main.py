@@ -1,5 +1,5 @@
 from get_cover_url import get_cover_url
-from cache_handler import CacheHandler
+from cache_handler import LocalCache
 from request_handler import get_resource
 import json
 import time
@@ -30,7 +30,7 @@ def get_all_covers():
     
     total_num = len(cover_urls)
     for idx, song_id in enumerate(cover_urls):
-        with CacheHandler(song_id) as ch:
+        with LocalCache(song_id) as ch:
             cover_url = ch.get_cover_url()
             cover = get_resource(cover_url).content
             ch.write_file("cover.jpg", cover)

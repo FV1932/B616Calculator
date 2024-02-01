@@ -2,7 +2,7 @@ import pathlib
 import json
 
 
-class CacheHandler:
+class LocalCache:
     """Handles local caches for a song.
     This actually shouldn't be used by the user.
     TODO: Write a better class that serves data from the cache or request it
@@ -15,7 +15,7 @@ class CacheHandler:
 
     @staticmethod
     def getMainCachePath(song_id) -> pathlib.Path:
-        return pathlib.Path(CacheHandler.LOCAL_CACHE, song_id, "main.json")
+        return pathlib.Path(LocalCache.LOCAL_CACHE, song_id, "main.json")
 
     def __enter__(self):
         return self
@@ -26,7 +26,7 @@ class CacheHandler:
 
     def __init__(self, song_id: str) -> None:
         self.song_id: str = str(song_id)
-        self.mainPath = CacheHandler.getMainCachePath(self.song_id)
+        self.mainPath = LocalCache.getMainCachePath(self.song_id)
         self.mainPath.parent.mkdir(parents=True, exist_ok=True)
         if self.mainPath.is_file():
             with open(self.mainPath, "r") as f:

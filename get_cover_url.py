@@ -1,4 +1,4 @@
-from cache_handler import CacheHandler
+from cache_handler import LocalCache
 import lxml.html as html
 from urllib.parse import urljoin
 import logging
@@ -7,7 +7,7 @@ from request_handler import get_resource
 logger = logging.getLogger(__name__)
 
 def get_cover_url(song_id: str, *, force_flush_cache = False) -> str:
-    with CacheHandler(song_id) as ch:
+    with LocalCache(song_id) as ch:
         if not force_flush_cache:
             url = ch.get_cover_url()
             if url:
