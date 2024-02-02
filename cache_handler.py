@@ -46,6 +46,9 @@ class LocalCache:
     def set_cover_url(self, cover_url: str):
         self["cover_url"] = cover_url
     
+    def get_file(self, filename: str) -> bytes:
+        return (self.mainPath.parent / filename).read_bytes()
+    
     def write_file(self, filename: str, contents: bytes | str):
         if isinstance(contents, str):
             mode = "w"
