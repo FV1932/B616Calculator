@@ -1,7 +1,7 @@
-from local_cache import LocalCache
+from b616_calculator.utilities.local_cache import LocalCache
 import lxml.html as html
 import logging
-from request_handler import get_resource
+from b616_calculator.utilities.request_handler import get_resource
 
 logger = logging.getLogger(__name__)
 

@@ -4,3 +4,4 @@ cache/
 site_cache/
 __pycache__
 *.sqlite
+.mypy_cache

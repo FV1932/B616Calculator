@@ -1,8 +1,7 @@
-from utilities.get_cover_url import get_cover_url
-from utilities.local_cache import LocalCache
-from utilities.request_handler import get_resource
+from b616_calculator.utilities.get_cover_url import get_cover_url
+from b616_calculator.utilities.local_cache import LocalCache
+from b616_calculator.utilities.request_handler import get_resource
 import json
-import time
 import logging
 
 def main():
