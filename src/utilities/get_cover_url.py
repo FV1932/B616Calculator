@@ -1,6 +1,5 @@
-from cache_handler import LocalCache
+from local_cache import LocalCache
 import lxml.html as html
-from urllib.parse import urljoin
 import logging
 from request_handler import get_resource
 
@@ -22,8 +21,4 @@ def get_cover_url(song_id: str, *, force_flush_cache = False) -> str:
         logger.info(f"Set cover url of {song_id} to {cover_url}")
     return cover_url
 
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    get_cover_url("tempestissimo", force_flush_cache=True)
 

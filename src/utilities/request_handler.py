@@ -1,7 +1,6 @@
 import requests
 import requests_cache
 from urllib.parse import urljoin
-import pathlib
 import logging
 import time
 
