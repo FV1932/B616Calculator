@@ -1,6 +1,6 @@
 [project]
-name = "b616-calculator"  # Required
-version = "0.0.1"  # Required
+name = "b616-calculator"
+version = "0.0.1"
 
 description = "Yet another Arcaea B30 calculator"
 
@@ -8,7 +8,7 @@ readme = "README.md"
 
 requires-python = ">=3.9"
 
-license = {file = "LICENSE.txt"}
+license = {file = "LICENSE"}
 
 # authors = [
 #   {name = "FV1932", email = "unknown@example.com" }
