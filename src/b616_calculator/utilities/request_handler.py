@@ -1,8 +1,8 @@
-import requests
-import requests_cache
-from urllib.parse import urljoin
 import logging
 import time
+from urllib.parse import urljoin
+import requests
+import requests_cache
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +14,6 @@ def get_resource(path: str, refresh: bool = False, timeout: float = 1.0) -> requ
     full_url = urljoin(BASE_URL, path)
     res = session.get(full_url, refresh)
     if not getattr(res, "from_cache", False):
-        logger.info(f"Cache miss at {path}. Sleeping for {timeout} seconds")
+        logger.info("Cache miss at %s. Sleeping for %s seconds", path, timeout)
         time.sleep(timeout)
     return res
