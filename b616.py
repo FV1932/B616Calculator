@@ -22,7 +22,7 @@ def xlsx_tolist():
     return xlsx.values.tolist()
 
 
-def cust_input():
+def custom_input():
     custom_num = int(input("Hi, B616 here, 请输入显示/计算的成绩行数 e.g.30: "))
     if custom_num <= 0 or custom_num > len(in_list):
         print("输入量不符合数据量, 重来")
@@ -366,7 +366,7 @@ if __name__ == "__main__":
     )  # 忽略字体Error级以下的报错
 
     in_list = xlsx_tolist()  # 读入xlsx文件转换成标准list
-    custom_num = cust_input()  # 让用户输入想要查看的成绩数量
+    custom_num = custom_input()  # 让用户输入想要查看的成绩数量
     custom_num_over30 = custom_num >= 30
 
     desc_ra_list = get_desc_list()  # 数据有效性检查, 计算rating返回倒序list
