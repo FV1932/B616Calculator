@@ -51,7 +51,7 @@ def read_ptt_history_csv():
 # 以下为排序和计算函数
 
 
-def get_desc_list():
+def get_desc_ra_list():
     invalid_score = []
     for row in in_list:
         score = row[3]  # 玩家输入的得分(score)
@@ -87,8 +87,8 @@ def get_desc_list():
             )
         time.sleep(1)
         input("Press enter to continue")
-    # 最后根据rating逆向排序并返回
-    return sorted(in_list, key=lambda s: s[4], reverse=True)  # rating
+    # 最后返回添加了rating的列表
+    return sorted(in_list, key=lambda s: s[4], reverse=True)
 
 
 def get_cust_avg():
@@ -114,7 +114,7 @@ def get_b30_avg():
 def write_ptt_history_csv():
     with open("ptt_history.csv", mode="a", newline="") as f:
         line = [
-            time.strftime("%Y/%m/%d", time.localtime()),
+            time.strftime("%Y-%m-%d", time.localtime()),
             real_ptt_input,
             str(b30_only),
             str(b30_withr10),
@@ -124,13 +124,15 @@ def write_ptt_history_csv():
 
 
 # 以下为数据分析呈现函数
+
+
 def show_desc_ra_list():
     print()
 
     def print_row(row):
         print(f"{row[0]} {row[1]} {row[2]} score: {int(row[3])} rating: {row[4]:.4f}")
 
-    rows = desc_ra_list[:custom_num]
+    rows = desc_ra_list[0:custom_num]
     for row in rows[:30]:  # Print at most 30 rows
         print_row(row)
     print()
@@ -181,62 +183,73 @@ def suggest_song():
 
 
 def draw_rt_sc_chart():
-    sg_title = []  # song title（曲名）
-    x_detail = []  # x-axis detail（定数）
-    y_rating = []  # y-axis rating（单曲ptt）
-    y1_score = []  # y-axis score（单曲得分）
-    for row in desc_ra_list[0:custom_num]:
-        sg_title.append(row[0])
-        x_detail.append(row[2])
-        y1_score.append(row[3])
-        y_rating.append(row[4])
-
-    lx_dt = min(x_detail)
-    mx_dt = max(x_detail)
-    ptp_xdt = mx_dt - lx_dt  # ptp of numpy (不为这个特地import了)
-    marksize = max(5, 10 - ptp_xdt - 0.03 * custom_num)  # 散点曲名标记的字体大小
-
-    #  生成 rating/定数 图
+    # 生成 rating/定数 图
     def rating2detail_chart():
+        desc_dtra_list = sorted(
+            desc_ra_list[0:custom_num], key=lambda s: (s[2], s[4]), reverse=True
+        )
+        sg_title = []  # song title (曲名)
+        x_detail = []  # x-axis detail (定数)
+        y_rating = []  # y-axis rating (单曲ptt)
+        for row in desc_dtra_list:
+            sg_title.append(row[0])
+            x_detail.append(row[2])
+            y_rating.append(row[4])
+
+        lx_dt = min(x_detail)
+        mx_dt = max(x_detail)
+        ptp_xdt = mx_dt - lx_dt  # 上下限 ptp of numpy
         ly_rt = min(y_rating)
         my_rt = max(y_rating)
         ptp_yrt = my_rt - ly_rt
-        ################这一段是对图表进行初始化和自定义################
+        ###################下一段是对图表进行初始化和自定义###################
         fig, ax = plt.subplots()
         ax.scatter(x_detail, y_rating, s=(20 - pow(custom_num, 0.5)))
         ax.set_xlabel("谱面定数", fontsize=12)
         ax.set_ylabel("单曲Rating", fontsize=12)
-        ax.axis(
-            [lx_dt - 0.01, mx_dt + 0.05, ly_rt - 0.01, my_rt + 0.02]
-        )  # 设置每个坐标轴的取值范围
+        ax.axis([lx_dt - 0.01, mx_dt + 0.05, ly_rt - 0.01, my_rt + 0.02])
+        # 设置每个坐标轴的取值范围
         ax.tick_params(
             axis="both", which="major", labelright=True, labelsize=10, pad=2, color="r"
-        )  # 设置刻度标记的样式
-        ax.xaxis.set_major_locator(
-            ticker.MultipleLocator(0.1)
-        )  # : 横轴标注以0.1为单位步进 (即arcaea官方定数的最小单位)
-        ax.grid(
-            axis="y", color="r", linestyle="--", linewidth=0.4
-        )  # 设置图表的外观样式
-        if custom_num_over30:  # 生成理论ptt横线,图例自动放在最佳位置
+        )
+        # 设置刻度标记的样式
+        ax.xaxis.set_major_locator(ticker.MultipleLocator(0.1))
+        ax.yaxis.set_major_locator(ticker.MultipleLocator(0.1))
+        # 横纵轴标注以0.1为单位步进 (即arcaea官方定数的最小单位)
+        ax.grid(axis="y", color="r", linestyle="--", linewidth=0.4)
+        # 设置图表的外观样式
+        if custom_num_over30:  # 生成ptt横线
             ax.axhline(
                 y=b30_withr10,
-                linewidth=1,  # linewidth
-                linestyle="-.",  # linestyle
-                label=f"r10=b10时的理论最高ptt:{b30_withr10:.4f}",
-            )  # 图例
+                color="b",
+                linewidth=1,
+                linestyle="dotted",
+                label=f"理论最高 ptt:{b30_withr10:.4f}",
+            )
+            ax.axhline(
+                y=float(real_ptt_input),
+                color="c",
+                linewidth=1,
+                linestyle="dashed",
+                label=f"当前实际 ptt:{real_ptt_input}",
+            )
+            ax.axhline(
+                y=b30_only,
+                color="g",
+                linewidth=1,
+                linestyle="dotted",
+                label=f"仅b30底分 ptt:{b30_only:.4f}",
+            )
             ax.legend(loc="best")  # 自动调整图例到最佳位置
-        ################################################################
-
-        ################这一段是对每个点生成曲名文字标注###################
-        last_ra = 0  # 上一轮的rating数值
-        last_dt = 0  # 上一轮的谱面定数,因为定数不会为0所以第一轮必进else
+        ###################下一段是对每个点生成曲名文字标注###################
+        last_ra = 0  # 上一轮的rating单曲ptt
+        last_dt = 0  # 上一轮的detail谱面定数,定数不会为0所以第一轮必进else
         last_labelen = 0  # 上一轮曲名长度
         for i, label in enumerate(sg_title):
             x = x_detail[i]
             y = y_rating[i]
             if (
-                last_ra - y < (0.007 * ptp_yrt) and last_dt == x
+                last_ra - y < (0.0075 * ptp_yrt) and last_dt == x
             ):  # 如果跟上一个(同定数的)成绩在y轴距离过近:
                 extend_len += last_labelen  # 根据曲名长度累积的 额外位移距离因数
                 extend_counter += 1  # 根据重叠个数累积的 基础位移距离因数
@@ -244,10 +257,10 @@ def draw_rt_sc_chart():
                     label,
                     xy=(x, y),
                     xytext=(
-                        x + extend_counter * ptp_xdt / 32 + extend_len / 120,
+                        x + extend_counter * pow(ptp_xdt, 0.5) / 50 + extend_len / 200,
                         y - ptp_yrt / 400,
                     ),
-                    fontsize=marksize,
+                    fontsize=max(5, 10 - ptp_xdt - 0.04 * custom_num),
                 )
             else:
                 extend_len = 0
@@ -256,43 +269,53 @@ def draw_rt_sc_chart():
                     label,
                     xy=(x, y),
                     xytext=(
-                        x + ptp_xdt / 600,
+                        x + ptp_xdt / 800,
                         y - ptp_yrt / 400,
                     ),
-                    fontsize=marksize,
+                    fontsize=max(5, 10 - ptp_xdt - 0.04 * custom_num),
                 )
-                # 以上的魔数都是为了调整annotation位置, 很抱歉都是试出来的, 但adjust拒绝好好工作所以
+            # 以上的魔数都是为了调整annotation位置, 很抱歉都是试出来的, 因为adjust太烂
             last_ra = y
             last_dt = x
             last_labelen = len(label)
-        ################################################################
         plt.show()
 
     #  生成 score/定数 图
     def score2detail_chart():
+        desc_dtsc_list = sorted(
+            desc_ra_list[0:custom_num], key=lambda s: (s[2], s[3]), reverse=True
+        )
+        # 逆向排序, 第一参数x轴detail定数，第二参数score
+        sg_title = []  # song title (曲名)
+        x_detail = []  # x-axis detail (定数)
+        y1_score = []  # y-axis score (单曲得分)
+        for row in desc_dtsc_list:
+            sg_title.append(row[0])
+            x_detail.append(row[2])
+            y1_score.append(row[3])
+
+        lx_dt = min(x_detail)
+        mx_dt = max(x_detail)
+        ptp_xdt = mx_dt - lx_dt
         ly_sc = min(y1_score)
         my_sc = max(y1_score)
         ptp_ysc = my_sc - ly_sc
-        ################这一段是对图表进行初始化和自定义###################
+        ###################下一段是对图表进行初始化和自定义###################
         fig, ax = plt.subplots()
         ax.scatter(x_detail, y1_score, s=(20 - pow(custom_num, 0.5)))
         ax.set_xlabel("谱面定数", fontsize=12)
         ax.set_ylabel("单曲Score", fontsize=12)
-        ax.axis(
-            [lx_dt - 0.01, mx_dt + 0.03, ly_sc - 1500, 1e7]
-        )  # 设置每个坐标轴的取值范围, Y轴最高固定取10M(即PM线)
+        ax.axis([lx_dt - 0.01, mx_dt + 0.05, ly_sc - 1500, 1e7])
+        # 设置每个坐标轴的取值范围, Y轴最高固定取10M(即PM线)
         ax.tick_params(
             axis="both", which="major", labelright=True, labelsize=10, pad=2, color="r"
-        )  # 设置刻度标记的样式
-        ax.xaxis.set_major_locator(
-            ticker.MultipleLocator(0.1)
-        )  # tick_spacing = 0.1: 横轴标注以0.1为单位步进
-        ax.grid(
-            axis="y", color="r", linestyle="--", linewidth=0.4
-        )  # 设置图表的外观样式
-        ################################################################
-
-        ################这一段是对每个点生成曲名文字标注###################
+        )
+        # 设置刻度标记的样式
+        ax.xaxis.set_major_locator(ticker.MultipleLocator(0.1))
+        # 横轴标注以0.1为单位步进 (即arcaea官方定数的最小单位)
+        ax.grid(axis="y", color="r", linestyle="--", linewidth=0.4)
+        # 设置图表的外观样式
+        ###################下一段是对每个点生成曲名文字标注###################
         last_sc = 0  # 上一轮的score数值
         last_dt = 0  # 上一轮的谱面定数
         last_labelen = 0  # 上一轮曲名长度
@@ -308,10 +331,10 @@ def draw_rt_sc_chart():
                     label,
                     xy=(x, y),
                     xytext=(
-                        x + extend_counter * ptp_xdt / 32 + extend_len / 120,
+                        x + extend_counter * pow(ptp_xdt, 0.5) / 50 + extend_len / 200,
                         y - ptp_ysc / 400,
                     ),
-                    fontsize=marksize,
+                    fontsize=max(5, 10 - ptp_xdt - 0.04 * custom_num),
                 )
             else:
                 extend_len = 0
@@ -320,10 +343,10 @@ def draw_rt_sc_chart():
                     label,
                     xy=(x, y),
                     xytext=(
-                        x + ptp_xdt / 600,
+                        x + ptp_xdt / 800,
                         y - ptp_ysc / 400,
                     ),
-                    fontsize=marksize,
+                    fontsize=max(5, 10 - ptp_xdt - 0.04 * custom_num),
                 )
                 # 以上的魔数都是为了调整annotation位置
             last_sc = y
@@ -344,7 +367,7 @@ def draw_history_b30_chart():
         time.sleep(1)
         return
     x_time = [datetime.strptime(d, "%Y-%m-%d") for d in x_time]
-    dot_size = max((50 - pow(len(x_time), 0.5)), 10)
+    dot_size = max((50 - pow(len(x_time), 0.5)), 8)
 
     y_realptt = line[1]
     y_maxiptt = line[2]
@@ -369,7 +392,7 @@ if __name__ == "__main__":
     custom_num = custom_input()  # 让用户输入想要查看的成绩数量
     custom_num_over30 = custom_num >= 30
 
-    desc_ra_list = get_desc_list()  # 数据有效性检查, 计算rating返回倒序list
+    desc_ra_list = get_desc_ra_list()  # 数据有效性检查, 返回倒序排列ra的list
     cust_average = get_cust_avg()  # 根据用户输入的成绩数量计算rating均值
     if custom_num_over30:
         b30_pack = get_b30_avg()  # 计算b30并return以下两个数据:
@@ -377,7 +400,7 @@ if __name__ == "__main__":
         b30_withr10 = b30_pack[1]  # r10=b10时的理论最高ptt
 
         real_ptt_input = input("请输入当前您的实际ptt(例 12.47): ")
-        if input("是否要更新历史ptt数据(Y/N): ").upper() == "Y":  # by和Y都会确认
+        if input("是否要更新历史ptt数据(Y/N): ").upper() == "Y":  # y和Y都会确认
             write_ptt_history_csv()  # 把 real_ptt_input和b30_withr10 存档, 用来生成变化图像
         print()
 
