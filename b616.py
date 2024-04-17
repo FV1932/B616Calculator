@@ -152,7 +152,7 @@ def show_desc_ra_list():
 
 
 def suggest_song():
-    target_rating = desc_ra_list[30][4]  # B30th的单曲rating, 超过这个就能推B30底分
+    target_rating = desc_ra_list[30][4]  # B30th的单曲ra, 超过这个就能推B30底分
     for i in range(min(len(desc_ra_list), 80), 30, -1):
         line = desc_ra_list[random.randint(30, i - 1)]
         # line=randint的范围会随着循环逐渐从30到min(len(desc_ra_list), 80)
@@ -187,7 +187,7 @@ def draw_rt_sc_chart():
     def rating2detail_chart():
         desc_dtra_list = sorted(
             desc_ra_list[0:custom_num], key=lambda s: (s[2], s[4]), reverse=True
-        )
+        )  # 对ra_list排序: 根据定数倒序, 同定数下rating倒序
         sg_title = []  # song title (曲名)
         x_detail = []  # x-axis detail (定数)
         y_rating = []  # y-axis rating (单曲ptt)
@@ -284,8 +284,7 @@ def draw_rt_sc_chart():
     def score2detail_chart():
         desc_dtsc_list = sorted(
             desc_ra_list[0:custom_num], key=lambda s: (s[2], s[3]), reverse=True
-        )
-        # 逆向排序, 第一参数x轴detail定数，第二参数score
+        )  # 对ra_list排序: 根据定数倒序, 同定数下score倒序
         sg_title = []  # song title (曲名)
         x_detail = []  # x-axis detail (定数)
         y1_score = []  # y-axis score (单曲得分)
@@ -398,7 +397,6 @@ if __name__ == "__main__":
         b30_pack = get_b30_avg()  # 计算b30并return以下两个数据:
         b30_only = b30_pack[0]  # 仅考虑b30底分的ptt
         b30_withr10 = b30_pack[1]  # r10=b10时的理论最高ptt
-
         real_ptt_input = input("请输入当前您的实际ptt(例 12.47): ")
         if input("是否要更新历史ptt数据(Y/N): ").upper() == "Y":  # y和Y都会确认
             write_ptt_history_csv()  # 把 real_ptt_input和b30_withr10 存档, 用来生成变化图像
