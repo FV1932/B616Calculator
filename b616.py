@@ -208,7 +208,7 @@ def draw_rt_sc_chart():
         ax.set_xlabel("谱面定数", fontsize=12)
         ax.set_ylabel("单曲Rating", fontsize=12)
         ax.axis([lx_dt - 0.01, mx_dt + 0.05, ly_rt - 0.01, my_rt + 0.02])
-        # 设置每个坐标轴的取值范围
+        # 设置坐标轴的取值范围
         ax.tick_params(
             axis="both", which="major", labelright=True, labelsize=10, pad=2, color="r"
         )
@@ -224,21 +224,21 @@ def draw_rt_sc_chart():
                 color="b",
                 linewidth=1,
                 linestyle="dotted",
-                label=f"理论最高 ptt:{b30_withr10:.4f}",
+                label=f"理论最高  ptt:{b30_withr10:.4f}",
             )
             ax.axhline(
                 y=float(real_ptt_input),
                 color="c",
                 linewidth=1,
                 linestyle="dashed",
-                label=f"当前实际 ptt:{real_ptt_input}",
+                label=f"当前实际  ptt:{real_ptt_input}",
             )
             ax.axhline(
                 y=b30_only,
                 color="g",
                 linewidth=1,
                 linestyle="dotted",
-                label=f"仅b30底分 ptt:{b30_only:.4f}",
+                label=f"仅b30底分ptt:{b30_only:.4f}",
             )
             ax.legend(loc="best")  # 自动调整图例到最佳位置
         ###################下一段是对每个点生成曲名文字标注###################
@@ -249,7 +249,7 @@ def draw_rt_sc_chart():
             x = x_detail[i]
             y = y_rating[i]
             if (
-                last_ra - y < (0.0075 * ptp_yrt) and last_dt == x
+                last_ra - y < (0.005 * ptp_yrt) and last_dt == x
             ):  # 如果跟上一个(同定数的)成绩在y轴距离过近:
                 extend_len += last_labelen  # 根据曲名长度累积的 额外位移距离因数
                 extend_counter += 1  # 根据重叠个数累积的 基础位移距离因数
@@ -260,7 +260,7 @@ def draw_rt_sc_chart():
                         x + extend_counter * pow(ptp_xdt, 0.5) / 50 + extend_len / 200,
                         y - ptp_yrt / 400,
                     ),
-                    fontsize=max(5, 10 - ptp_xdt - 0.04 * custom_num),
+                    fontsize=max(3, 10 - ptp_xdt - 0.04 * custom_num),
                 )
             else:
                 extend_len = 0
@@ -272,7 +272,7 @@ def draw_rt_sc_chart():
                         x + ptp_xdt / 800,
                         y - ptp_yrt / 400,
                     ),
-                    fontsize=max(5, 10 - ptp_xdt - 0.04 * custom_num),
+                    fontsize=max(4, 10 - ptp_xdt - 0.04 * custom_num),
                 )
             # 以上的魔数都是为了调整annotation位置, 很抱歉都是试出来的, 因为adjust太烂
             last_ra = y
@@ -304,8 +304,8 @@ def draw_rt_sc_chart():
         ax.scatter(x_detail, y1_score, s=(20 - pow(custom_num, 0.5)))
         ax.set_xlabel("谱面定数", fontsize=12)
         ax.set_ylabel("单曲Score", fontsize=12)
-        ax.axis([lx_dt - 0.01, mx_dt + 0.05, ly_sc - 1500, 1e7])
-        # 设置每个坐标轴的取值范围, Y轴最高固定取10M(即PM线)
+        ax.axis([lx_dt - 0.01, mx_dt + 0.05, ly_sc - 1500, 1e7 + 5000])
+        # 设置坐标轴的取值范围, Y轴最高固定取10M+5000(即PM线上一些)
         ax.tick_params(
             axis="both", which="major", labelright=True, labelsize=10, pad=2, color="r"
         )
@@ -322,7 +322,7 @@ def draw_rt_sc_chart():
             x = x_detail[i]
             y = y1_score[i]
             if (
-                last_sc - y < (0.01 * ptp_ysc) and last_dt == x
+                last_sc - y < (0.008 * ptp_ysc) and last_dt == x
             ):  # 如果两个同定数的成绩y轴距离过近:
                 extend_len += last_labelen
                 extend_counter += 1
@@ -333,7 +333,7 @@ def draw_rt_sc_chart():
                         x + extend_counter * pow(ptp_xdt, 0.5) / 50 + extend_len / 200,
                         y - ptp_ysc / 400,
                     ),
-                    fontsize=max(5, 10 - ptp_xdt - 0.04 * custom_num),
+                    fontsize=max(4, 10 - ptp_xdt - 0.04 * custom_num),
                 )
             else:
                 extend_len = 0
@@ -345,7 +345,7 @@ def draw_rt_sc_chart():
                         x + ptp_xdt / 800,
                         y - ptp_ysc / 400,
                     ),
-                    fontsize=max(5, 10 - ptp_xdt - 0.04 * custom_num),
+                    fontsize=max(3, 10 - ptp_xdt - 0.04 * custom_num),
                 )
                 # 以上的魔数都是为了调整annotation位置
             last_sc = y
