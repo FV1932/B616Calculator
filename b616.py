@@ -257,7 +257,7 @@ def draw_rt_sc_chart():
                     label,
                     xy=(x, y),
                     xytext=(
-                        x + extend_counter * pow(ptp_xdt, 0.5) / 50 + extend_len / 200,
+                        x + extend_counter * pow(ptp_xdt, 0.5) / 40 + extend_len / 180,
                         y - ptp_yrt / 400,
                     ),
                     fontsize=max(3, 10 - ptp_xdt - 0.04 * custom_num),
@@ -330,7 +330,7 @@ def draw_rt_sc_chart():
                     label,
                     xy=(x, y),
                     xytext=(
-                        x + extend_counter * pow(ptp_xdt, 0.5) / 50 + extend_len / 200,
+                        x + extend_counter * pow(ptp_xdt, 0.5) / 40 + extend_len / 180,
                         y - ptp_ysc / 400,
                     ),
                     fontsize=max(4, 10 - ptp_xdt - 0.04 * custom_num),
