@@ -53,7 +53,7 @@ jobs:
         files: |
           dist/b616-${{ matrix.generic-name }}${{ matrix.executable-extension }}
           dist/generate_excel-${{ matrix.generic-name }}${{ matrix.executable-extension }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.ACTIONS_RELEASE_PAT }}
         make_latest: ${{ startsWith(github.ref, 'refs/tags/v') }}
         draft: true
     - name: Upload artifacts
