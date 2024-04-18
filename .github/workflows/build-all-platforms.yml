@@ -7,6 +7,7 @@ on:
   push:
     tags:
       - v*
+      - test-*
 
 permissions:
   contents: read
@@ -20,10 +21,13 @@ jobs:
         include:
           - os: ubuntu-latest
             generic-name: Linux
+            executable-extension: ""
           - os: macos-latest
             generic-name: MacOS
+            executable-extension: ""
           - os: windows-latest
             generic-name: Windows
+            executable-extension: ".exe"
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
@@ -41,6 +45,17 @@ jobs:
       run: |
         pyinstaller --onefile b616.py
         pyinstaller --onefile generate_excel.py
+        mv dist/b616${{ matrix.executable-extension }} dist/b616-${{ matrix.generic-name }}${{ matrix.executable-extension }}
+        mv dist/generate_excel${{ matrix.executable-extension }} dist/generate_excel-${{ matrix.generic-name }}${{ matrix.executable-extension }}
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          dist/b616-${{ matrix.generic-name }}${{ matrix.executable-extension }}
+          dist/generate_excel-${{ matrix.generic-name }}${{ matrix.executable-extension }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        make_latest: true
+        draft: true
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
