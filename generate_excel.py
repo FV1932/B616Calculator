@@ -4,6 +4,8 @@ import pathlib
 import requests
 import shutil
 
+pd.set_option("mode.copy_on_write", True)
+
 DIFFICULTIES = ["PST", "PRS", "FTR", "BYD", "ETR"]
 DIFFICULTY_COLORS = {
     "PST": "#40A0A0",
@@ -107,7 +109,7 @@ def main():
         df_in = df_in[["score"]]
         df_output = df.join(df_in, how="outer", on=["songid", "label"])
     except (FileNotFoundError, KeyError, ValueError) as e:
-        df_output = df
+        df_output = df.copy()
         df_output["score"] = pd.NA
         warnings.warn(
             "Unable to process old scores, continuing without them", UserWarning
